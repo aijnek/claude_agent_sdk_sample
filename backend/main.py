@@ -1,3 +1,5 @@
+import json
+
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -35,6 +37,6 @@ async def chat(request: ChatRequest):
                     if line.startswith("data:"):
                         data = line[len("data:") :].strip()
                         if data:
-                            yield data
+                            yield json.loads(data)
 
     return EventSourceResponse(event_generator())
