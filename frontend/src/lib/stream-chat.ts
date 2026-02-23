@@ -1,12 +1,20 @@
+export interface StreamChatResult {
+  sessionId: string | null;
+}
+
 export async function streamChat(
   message: string,
   onChunk: (text: string) => void,
-  onDone: () => void,
+  onDone: (result: StreamChatResult) => void,
+  sessionId?: string | null,
 ) {
   const response = await fetch("http://localhost:8001/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: message }),
+    body: JSON.stringify({
+      prompt: message,
+      ...(sessionId && { session_id: sessionId }),
+    }),
   });
 
   if (!response.ok) {
@@ -16,6 +24,7 @@ export async function streamChat(
   const reader = response.body!.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let receivedSessionId: string | null = null;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -33,7 +42,10 @@ export async function streamChat(
         if (event.type === "text") {
           onChunk(event.content);
         } else if (event.type === "done") {
-          onDone();
+          if (event.session_id) {
+            receivedSessionId = event.session_id;
+          }
+          onDone({ sessionId: receivedSessionId });
           return;
         }
       } catch {
@@ -42,5 +54,5 @@ export async function streamChat(
     }
   }
 
-  onDone();
+  onDone({ sessionId: receivedSessionId });
 }

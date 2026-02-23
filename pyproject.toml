@@ -10,4 +10,5 @@ dependencies = [
     "uvicorn>=0.41.0",
     "httpx>=0.28.1",
     "sse-starlette>=3.2.0",
+    "dbos>=2.13.0",
 ]

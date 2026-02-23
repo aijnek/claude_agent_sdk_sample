@@ -10,6 +10,7 @@ import { Message } from "@/types/chat";
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const handleSend = useCallback(async (content: string) => {
     const userMessage: Message = {
@@ -40,7 +41,13 @@ export function Chat() {
             ),
           );
         },
-        () => setIsStreaming(false),
+        (result) => {
+          if (result.sessionId) {
+            setSessionId(result.sessionId);
+          }
+          setIsStreaming(false);
+        },
+        sessionId,
       );
     } catch {
       setMessages((prev) =>
@@ -52,7 +59,7 @@ export function Chat() {
       );
       setIsStreaming(false);
     }
-  }, []);
+  }, [sessionId]);
 
   return (
     <Card className="flex h-[600px] w-full max-w-2xl flex-col">

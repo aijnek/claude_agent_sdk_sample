@@ -12,7 +12,8 @@ app = BedrockAgentCoreApp()
 @app.entrypoint
 async def handle_request(request):
     prompt = request.get("prompt", "")
-    async for chunk in run_agent(prompt):
+    history = request.get("history")
+    async for chunk in run_agent(prompt, history):
         yield chunk
 
 
