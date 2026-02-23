@@ -1,0 +1,9 @@
+[project]
+name = "claude-agent-sdk-sample-app"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "claude-agent-sdk",
+    "bedrock-agentcore",
+    "python-dotenv>=1.2.1",
+]
