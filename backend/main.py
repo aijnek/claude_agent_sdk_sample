@@ -8,7 +8,14 @@ from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
 from backend.dbos_config import init_dbos
-from backend.session import create_session, get_conversation_history, init_db, save_message
+from backend.session import (
+    create_session,
+    delete_session,
+    get_conversation_history,
+    init_db,
+    list_sessions,
+    save_message,
+)
 
 app = FastAPI()
 
@@ -33,6 +40,22 @@ class ChatRequest(BaseModel):
 @app.on_event("startup")
 async def startup():
     init_db()
+
+
+@app.get("/sessions")
+async def sessions():
+    return list_sessions()
+
+
+@app.get("/sessions/{session_id}/messages")
+async def session_messages(session_id: str):
+    return get_conversation_history(session_id)
+
+
+@app.delete("/sessions/{session_id}")
+async def remove_session(session_id: str):
+    delete_session(session_id)
+    return {"ok": True}
 
 
 @app.post("/chat")
