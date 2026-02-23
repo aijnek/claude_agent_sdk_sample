@@ -61,7 +61,7 @@ async def chat(request: ChatRequest):
                                 assistant_content += event["content"]
                             elif event.get("type") == "done":
                                 event["session_id"] = session_id
-                            yield event
+                            yield json.dumps(event)
 
         if assistant_content:
             save_message(session_id, "assistant", assistant_content)
