@@ -13,7 +13,7 @@ export function MessageList({ messages }: { messages: Message[] }) {
   }, [messages]);
 
   return (
-    <ScrollArea className="flex-1 px-4">
+    <ScrollArea className="min-h-0 flex-1 px-4">
       <div className="flex flex-col gap-3 py-4">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
